@@ -78,6 +78,8 @@ const fade = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 
 /** The narrator sits a little forward in the teaser, where the words compete with a full score. */
 const TEASER_VOICE = 1.4;
+/** Frames between two demo lines that count as a wait, not a breath. */
+const WAIT = 90;
 
 /**
  * The teaser's score, then a quiet bed under the demo. Between lines the score climbs toward the
@@ -93,6 +95,13 @@ function Score({ plan }: { plan: Plan }) {
     return 1 - (1 - beneath(frame)) * under * (1 - hit(frame));
   };
   const level = (frame: number) => interpolate(frame, [0, 230, 300, 590, 600, 930, 940, 1060], [0.34, 0.42, 0.5, 0.58, 0.78, 0.78, 0.2, 0], fade);
+  // A live transaction takes as long as its block, so the bed comes up to carry the wait.
+  const demo = plan.voices.filter((v) => v.from >= TEASER_FRAMES);
+  const waits = demo.slice(1).flatMap((next, i) => {
+    const end = demo[i].from + demo[i].frames;
+    return next.from - end > WAIT ? [[end, next.from]] : [];
+  });
+  const lift = (frame: number) => waits.reduce((most, [from, to]) => Math.max(most, interpolate(frame, [from, from + 20, to - 15, to], [0, 1, 1, 0], fade)), 0);
   return (
     <>
       <Audio src={staticFile("sfx/teaser.wav")} volume={(f) => level(f) * ducked(f)} />
@@ -102,7 +111,7 @@ function Score({ plan }: { plan: Plan }) {
           loop
           volume={(f) => {
             const left = plan.total - TEASER_FRAMES - f;
-            return interpolate(f, [0, 90], [0, 0.12], fade) * interpolate(left, [0, 100], [0, 1], fade);
+            return interpolate(f, [0, 90], [0, 0.12], fade) * interpolate(left, [0, 100], [0, 1], fade) * (1 + 1.4 * lift(f + TEASER_FRAMES));
           }}
         />
       </Sequence>

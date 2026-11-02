@@ -124,8 +124,8 @@ export function Hero({ shot, plan }: SceneProps) {
   );
 }
 
-/** Shows what the wallet is really signing: one Ethereum transaction that runs as a native call. */
-function Transaction({ at, until }: { at: number; until: number }) {
+/** A note pinned over the window, for what a recording of the page cannot show. */
+function Note({ at, until, title, children }: { at: number; until: number; title: string; children: ReactNode }) {
   const frame = useCurrentFrame();
   const o = ramp(frame, at, 12) * (1 - ramp(frame, until, 10));
   return (
@@ -144,16 +144,9 @@ function Transaction({ at, until }: { at: number; until: number }) {
       }}
     >
       <Label color={ink.vermilion} size={15}>
-        One Ethereum transaction
+        {title}
       </Label>
-      <div style={{ marginTop: 10, fontFamily: fonts.mono, fontSize: 21, lineHeight: 1.5, color: ink.press }}>
-        <div>
-          to <span style={{ color: ink.nasik }}>0x6d6f...0000</span>, the pallets address
-        </div>
-        <div>
-          runs <span style={{ color: ink.nasik }}>nominationPools.join</span>
-        </div>
-      </div>
+      <div style={{ marginTop: 10, fontFamily: fonts.mono, fontSize: 21, lineHeight: 1.5, color: ink.press }}>{children}</div>
     </div>
   );
 }
@@ -163,7 +156,20 @@ export function Counter({ shot, plan }: SceneProps) {
   const bond = atMark(plan, shot, "bond");
   const bonded = atMark(plan, shot, "bonded");
   return (
-    <Filmed plan={plan} shot={shot} above={<Transaction at={cue(shot, "your")} until={cue(shot, "call") + 90} />}>
+    <Filmed
+      plan={plan}
+      shot={shot}
+      above={
+        <Note at={cue(shot, "your")} until={cue(shot, "call") + 90} title="One Ethereum transaction">
+          <div>
+            to <span style={{ color: ink.nasik }}>0x6d6f...0000</span>, the pallets address
+          </div>
+          <div>
+            runs <span style={{ color: ink.nasik }}>nominationPools.join</span>
+          </div>
+        </Note>
+      }
+    >
       <Sfx name="tick" at={connected - 5} volume={0.5} />
       <LoopedSfx name="typing" from={bond - 50} frames={16} volume={0.2} />
       <Sfx name="tick" at={bond - 5} volume={0.5} />
@@ -238,10 +244,24 @@ function Blocks({ shot }: { shot: Shot }) {
 }
 
 export function Draw({ shot, plan }: SceneProps) {
+  const finish = atMark(plan, shot, "finish");
+  const waiting = finish + 78;
   return (
-    <Filmed plan={plan} shot={shot}>
+    <Filmed
+      plan={plan}
+      shot={shot}
+      above={
+        <Note at={waiting} until={atMark(plan, shot, "paid") - 12} title="A real transaction">
+          <div>
+            to <span style={{ color: ink.nasik }}>PrizeVault</span>, runs <span style={{ color: ink.nasik }}>draw</span>
+          </div>
+          <div>waiting for the next block</div>
+        </Note>
+      }
+    >
       <Blocks shot={shot} />
-      <Sfx name="tick" at={atMark(plan, shot, "finish") - 5} volume={0.5} />
+      <Sfx name="tick" at={finish - 5} volume={0.5} />
+      <Sfx name="tick" at={waiting} volume={0.3} />
     </Filmed>
   );
 }
