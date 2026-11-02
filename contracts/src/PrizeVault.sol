@@ -21,12 +21,13 @@ contract PrizeVault {
     uint64 public drawBlock;
     uint64 public round;
 
-    event Committed(uint64 indexed round, bytes32 root, uint128 totalWeight, uint64 drawBlock);
+    event Committed(uint64 indexed round, bytes32 root, uint128 totalWeight, uint64 snapshotBlock, uint64 drawBlock);
     event Drawn(uint64 indexed round, address indexed winner, uint256 ticket, uint256 prize, uint256 fee);
 
     error NotKeeper();
     error RoundOpen();
     error EmptyRound();
+    error LateSnapshot();
     error NotDrawable();
     error NotWinner();
     error BadProof();
@@ -41,9 +42,11 @@ contract PrizeVault {
 
     /// @notice Locks in the member snapshot, then waits for a block hash nobody can know yet.
     /// @dev A round nobody drew inside the window can be replaced, so a lost hash never stalls.
-    function commit(bytes32 root_, uint128 totalWeight_) external {
+    /// @param snapshotBlock The block the keeper read the pool at, so anyone can rebuild this root.
+    function commit(bytes32 root_, uint128 totalWeight_, uint64 snapshotBlock) external {
         if (msg.sender != keeper) revert NotKeeper();
         if (totalWeight_ == 0) revert EmptyRound();
+        if (snapshotBlock >= block.number) revert LateSnapshot();
         uint256 open = drawBlock;
         if (open != 0 && block.number <= open + WINDOW) revert RoundOpen();
 
@@ -51,7 +54,7 @@ contract PrizeVault {
         root = root_;
         totalWeight = totalWeight_;
         drawBlock = next;
-        emit Committed(++round, root_, totalWeight_, next);
+        emit Committed(++round, root_, totalWeight_, snapshotBlock, next);
     }
 
     /// @notice The ticket this round landed on, once the draw block's hash exists.

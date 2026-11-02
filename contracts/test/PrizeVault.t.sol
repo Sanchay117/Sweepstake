@@ -35,7 +35,7 @@ contract PrizeVaultTest is Test {
 
     function open(bytes32 root, uint128 total) internal returns (uint256 at) {
         vm.prank(keeper);
-        vault.commit(root, total);
+        vault.commit(root, total, 1);
         at = vault.drawBlock();
         vm.roll(at + 1);
         vm.setBlockhash(at, keccak256(abi.encode("hash", at)));
@@ -73,7 +73,7 @@ contract PrizeVaultTest is Test {
 
     function test_commitOpensRoundAtDelayedBlock() public {
         vm.prank(keeper);
-        vault.commit(bytes32(uint256(1)), 10);
+        vault.commit(bytes32(uint256(1)), 10, 1);
         assertEq(vault.round(), 1);
         assertEq(vault.drawBlock(), block.number + DELAY);
         assertEq(vault.totalWeight(), 10);
@@ -81,29 +81,46 @@ contract PrizeVaultTest is Test {
 
     function test_onlyKeeperCommits() public {
         vm.expectRevert(PrizeVault.NotKeeper.selector);
-        vault.commit(bytes32(uint256(1)), 10);
+        vault.commit(bytes32(uint256(1)), 10, 1);
     }
 
     function test_emptyRoundRejected() public {
         vm.prank(keeper);
         vm.expectRevert(PrizeVault.EmptyRound.selector);
-        vault.commit(bytes32(uint256(1)), 0);
+        vault.commit(bytes32(uint256(1)), 0, 1);
+    }
+
+    function test_commitNamesItsSnapshotBlock() public {
+        uint64 snapshot = uint64(block.number - 1);
+        vm.expectEmit(true, false, false, true);
+        emit PrizeVault.Committed(1, bytes32(uint256(1)), 10, snapshot, uint64(block.number + DELAY));
+        vm.prank(keeper);
+        vault.commit(bytes32(uint256(1)), 10, snapshot);
+    }
+
+    function test_snapshotMustPredateCommit() public {
+        vm.startPrank(keeper);
+        vm.expectRevert(PrizeVault.LateSnapshot.selector);
+        vault.commit(bytes32(uint256(1)), 10, uint64(block.number));
+        vm.expectRevert(PrizeVault.LateSnapshot.selector);
+        vault.commit(bytes32(uint256(1)), 10, uint64(block.number + 1));
+        vm.stopPrank();
     }
 
     function test_cannotCommitOverOpenRound() public {
         vm.startPrank(keeper);
-        vault.commit(bytes32(uint256(1)), 10);
+        vault.commit(bytes32(uint256(1)), 10, 1);
         vm.roll(block.number + DELAY + WINDOW);
         vm.expectRevert(PrizeVault.RoundOpen.selector);
-        vault.commit(bytes32(uint256(2)), 10);
+        vault.commit(bytes32(uint256(2)), 10, 1);
         vm.stopPrank();
     }
 
     function test_expiredRoundCanBeReplaced() public {
         vm.startPrank(keeper);
-        vault.commit(bytes32(uint256(1)), 10);
+        vault.commit(bytes32(uint256(1)), 10, 1);
         vm.roll(block.number + DELAY + WINDOW + 1);
-        vault.commit(bytes32(uint256(2)), 10);
+        vault.commit(bytes32(uint256(2)), 10, 1);
         vm.stopPrank();
         assertEq(vault.round(), 2);
         assertEq(vault.root(), bytes32(uint256(2)));
@@ -111,7 +128,7 @@ contract PrizeVaultTest is Test {
 
     function test_ticketUnknownBeforeDrawBlock() public {
         vm.prank(keeper);
-        vault.commit(bytes32(uint256(1)), 10);
+        vault.commit(bytes32(uint256(1)), 10, 1);
         vm.roll(vault.drawBlock());
         vm.expectRevert(PrizeVault.NotDrawable.selector);
         vault.ticket();
@@ -126,7 +143,7 @@ contract PrizeVaultTest is Test {
 
     function test_ticketRefusedWhenHashMissing() public {
         vm.prank(keeper);
-        vault.commit(bytes32(uint256(1)), 10);
+        vault.commit(bytes32(uint256(1)), 10, 1);
         uint256 at = vault.drawBlock();
         vm.roll(at + 1);
         vm.setBlockhash(at, bytes32(0));
@@ -226,7 +243,7 @@ contract PrizeVaultTest is Test {
     function testFuzz_ticketStaysInRange(bytes32 root, uint128 total, uint64 hashSeed) public {
         total = uint128(bound(total, 1, type(uint128).max));
         vm.prank(keeper);
-        vault.commit(root, total);
+        vault.commit(root, total, 1);
         uint256 at = vault.drawBlock();
         vm.roll(at + 1);
         vm.setBlockhash(at, keccak256(abi.encode(hashSeed)));
@@ -247,6 +264,6 @@ contract PrizeVaultTest is Test {
         vm.assume(outsider != keeper);
         vm.prank(outsider);
         vm.expectRevert(PrizeVault.NotKeeper.selector);
-        vault.commit(bytes32(uint256(1)), 10);
+        vault.commit(bytes32(uint256(1)), 10, 1);
     }
 }
