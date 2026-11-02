@@ -14,16 +14,17 @@ function odds(points, total) {
 
 export function renderRegister({ members }) {
   const body = document.querySelector("[data-register]");
-  const total = members.reduce((sum, member) => sum + member.points, 0n);
+  const bonded = members.filter((member) => member.points > 0n);
+  const total = bonded.reduce((sum, member) => sum + member.points, 0n);
   body.textContent = "";
-  if (members.length === 0) {
+  if (bonded.length === 0) {
     const row = body.insertRow();
     const cell = row.insertCell();
     cell.colSpan = 3;
     cell.textContent = "No bonds issued yet.";
     return;
   }
-  [...members]
+  bonded
     .sort((a, b) => (a.points < b.points ? 1 : -1))
     .forEach((member) => {
       const row = body.insertRow();
@@ -33,20 +34,36 @@ export function renderRegister({ members }) {
     });
 }
 
-export function renderHolding({ wallet, members }) {
+export function renderHolding({ wallet, members, era }) {
   const empty = document.querySelector("[data-holding-empty]");
   const facts = document.querySelector("[data-holding-facts]");
+  const exit = document.querySelector("[data-holding-exit]");
   const unbond = document.querySelector("[data-unbond]");
+  const withdraw = document.querySelector("[data-withdraw]");
+  const show = (name, text) => (document.querySelector(`[data-holding="${name}"]`).textContent = text);
   if (!wallet) return;
+
   const mine = members.find((member) => member.address.toLowerCase() === wallet.toLowerCase());
+  const bonded = Boolean(mine) && mine.points > 0n;
+  const leaving = mine?.unbonding ?? [];
+  const owed = leaving.reduce((sum, entry) => sum + entry.amount, 0n);
+  const freeAt = Math.max(0, ...leaving.map((entry) => entry.era));
+
   empty.textContent = "This wallet holds no bond yet.";
   empty.hidden = Boolean(mine);
-  facts.hidden = !mine;
-  unbond.hidden = !mine;
-  if (mine) {
+  facts.hidden = !bonded;
+  unbond.hidden = !bonded;
+  exit.hidden = owed === 0n;
+  withdraw.hidden = owed === 0n || !era || era.index < freeAt;
+
+  if (bonded) {
     const total = members.reduce((sum, member) => sum + member.points, 0n);
-    document.querySelector('[data-holding="tickets"]').textContent = formatPot(mine.points, 0);
-    document.querySelector('[data-holding="odds"]').textContent = odds(mine.points, total);
+    show("tickets", formatPot(mine.points, 0));
+    show("odds", odds(mine.points, total));
+  }
+  if (owed > 0n) {
+    show("unbonding", `${formatPot(owed, 0)} tPOT`);
+    show("free", `${freeAt}`);
   }
 }
 

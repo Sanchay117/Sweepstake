@@ -1027,6 +1027,26 @@ h2 {
   font: 400 0.8125rem / 1.5 var(--text);
 }
 
+/* Short laptop screens still get the whole certificate in one frame. */
+@media (min-width: 861px) and (max-height: 800px) {
+  .bond {
+    min-height: 100svh;
+  }
+
+  .bond__inner {
+    padding-block: 32px 40px;
+  }
+
+  .wordmark {
+    width: min(100%, 700px);
+  }
+
+  .bond__promise {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
 @media (max-width: 860px) {
   .bond {
     min-height: 100svh;

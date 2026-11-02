@@ -42,15 +42,16 @@ const wheels = numbering($("[data-wheels]"));
 function strikePostmark() {
   const slot = $("[data-postmark]");
   const last = state.rounds.find((round) => round.winner);
+  const pool = `POOL No. ${deployment.poolIds[0]}`;
   slot.innerHTML = last
     ? postmarkSvg({
-        ring: `PORTALDOT V3 TESTNET · POOL No. 1 · DRAW ${last.id} ·`,
+        ring: `PORTALDOT V3 TESTNET · ${pool} · DRAW ${last.id} ·`,
         date: dateLine(),
         middle: `#${last.drawBlock}`,
         foot: `${formatPot(last.prize, 3)} tPOT PAID`,
       })
     : postmarkSvg({
-        ring: "PORTALDOT V3 TESTNET · POOL No. 1 · OPEN ·",
+        ring: `PORTALDOT V3 TESTNET · ${pool} · OPEN ·`,
         date: dateLine(),
         middle: state.block ? `#${state.block}` : "BOND",
         foot: state.era ? `ERA ${state.era.index}` : "AWAITING DRAW",
@@ -152,6 +153,7 @@ function checkExhibit() {
 
 async function boot() {
   $("[data-specimen]").hidden = live;
+  document.querySelectorAll("[data-pool]").forEach((el) => (el.textContent = deployment.poolIds[0]));
   checkExhibit();
   await document.fonts.ready;
   paintAll();

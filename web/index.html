@@ -47,8 +47,8 @@
 
         <div class="bond__promise">
           <p>
-            Pool No. 1 holds the bearer&rsquo;s tPOT bonded in a keyless native account, and the bearer alone may
-            unbond it, payable in full after <span data-unbond-eras>672</span> eras.
+            Pool No. <span data-pool>1</span> holds the bearer&rsquo;s tPOT bonded in a keyless native account, and the
+            bearer alone may unbond it, payable in full after <span data-unbond-eras>672</span> eras.
           </p>
           <p>
             No other interest will be payable on the Bond but <em>PRIZES</em>, to be determined by lottery in the manner
@@ -165,7 +165,7 @@
             <li>
               <h3>You bond.</h3>
               <p>
-                Your wallet calls <code>nominationPools.join</code>. Your tPOT moves to Pool 1&rsquo;s own account, and
+                Your wallet calls <code>nominationPools.join</code>. Your tPOT moves to the pool&rsquo;s own account, and
                 no person has a key to it. MetaMask can sign this, because V3 runs an Ethereum transaction as a native
                 call.
               </p>
@@ -254,7 +254,7 @@
             </label>
             <label class="line">
               <span>Place</span>
-              <output>Pool No. 1, Portaldot V3 testnet</output>
+              <output>Pool No. <span data-pool>1</span>, Portaldot V3 testnet</output>
             </label>
             <div class="counter__actions">
               <button class="press" type="button" data-connect>Connect MetaMask</button>
@@ -277,7 +277,12 @@
               <div><dt>Tickets</dt><dd data-holding="tickets"></dd></div>
               <div><dt>Odds next draw</dt><dd data-holding="odds"></dd></div>
             </dl>
+            <dl class="holding__facts" data-holding-exit hidden>
+              <div><dt>On its way back</dt><dd data-holding="unbonding"></dd></div>
+              <div><dt>Free at era</dt><dd data-holding="free"></dd></div>
+            </dl>
             <button class="press press--quiet" type="button" data-unbond hidden>Unbond all</button>
+            <button class="press press--quiet" type="button" data-withdraw hidden>Withdraw</button>
           </div>
         </aside>
       </section>
@@ -316,8 +321,8 @@
         <h3>Limits we are not hiding</h3>
         <ul class="limits">
           <li>The keeper can post a false snapshot. It cannot hide one, because anyone can rebuild it. The contract does not stop it.</li>
-          <li>The draw uses a block hash. With two validators on this testnet, an author could withhold a block to change it.</li>
-          <li>A pool holds 32 members and the chain allows 16 pools. More members means more pools or a governance change.</li>
+          <li>The draw uses a block hash, so a block author could withhold a block to try for a different ticket. They would give up that block to do it.</li>
+          <li>A pool holds 32 members and the chain allows 16 pools, so Sweepstake holds 512 members today. The draw already reads several pools at once.</li>
           <li>Unbonding takes 672 eras here. Nobody can shorten that for you, including us.</li>
         </ul>
       </section>

@@ -3,8 +3,8 @@ import { Interface } from "ethers";
 import { accountToEvm } from "../../shared/address.mjs";
 import { VAULT_ABI } from "../../shared/vault.mjs";
 
-const NODE = "https://test-node-v3.portaldot.dev";
-const EVM = "https://test-evm-rpc-v3.portaldot.dev";
+const NODE = import.meta.env.VITE_NODE_RPC ?? "https://test-node-v3.portaldot.dev";
+const EVM = import.meta.env.VITE_EVM_RPC ?? "https://test-evm-rpc-v3.portaldot.dev";
 
 const KEYS = {
   poolMembers: "0x7a6d38deaa01cb6e76ee69889f1696273c5f69e270d5b7a07f9996fe9e4e0488",
@@ -87,7 +87,18 @@ export async function readApr() {
   return Number((paid * ERAS_PER_YEAR * 10_000n) / staked) / 100;
 }
 
-/** Every pool member, decoded from raw storage: pool id at byte 0, points at byte 4. */
+/** One member's record: pool id, points, a 16 byte reward counter, then (era, amount) unbonding pairs. */
+function decodeMember(value) {
+  const bytes = hexBytes(value);
+  const unbonding = [];
+  for (let i = 0; i < bytes[36] >> 2; i += 1) {
+    const at = 37 + i * 20;
+    unbonding.push({ era: Number(littleEndian(bytes, at, 4)), amount: littleEndian(bytes, at + 4, 16) });
+  }
+  return { poolId: Number(littleEndian(bytes, 0, 4)), points: littleEndian(bytes, 4, 16), unbonding };
+}
+
+/** Every record in these pools. A member who has left keeps one, with no points, until they withdraw. */
 export async function readMembers(poolIds, { at, exclude = [] } = {}) {
   const skip = new Set(exclude.map((a) => a.toLowerCase()));
   const keys = await pagedKeys(KEYS.poolMembers, at);
@@ -96,12 +107,9 @@ export async function readMembers(poolIds, { at, exclude = [] } = {}) {
   for (const [key, value] of values) {
     if (!value) continue;
     const accountHex = `0x${key.slice(-64)}`;
-    const bytes = hexBytes(value);
-    const poolId = Number(littleEndian(bytes, 0, 4));
     const address = accountToEvm(accountHex);
-    if (poolIds.includes(poolId) && !skip.has(address.toLowerCase())) {
-      members.push({ accountHex, address, poolId, points: littleEndian(bytes, 4, 16) });
-    }
+    const member = decodeMember(value);
+    if (poolIds.includes(member.poolId) && !skip.has(address.toLowerCase())) members.push({ accountHex, address, ...member });
   }
   return members;
 }

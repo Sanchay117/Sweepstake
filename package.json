@@ -7,6 +7,8 @@
     "fork": "chopsticks --config=keeper/fork/chopsticks.yml",
     "test": "node --test \"keeper/test/*.test.mjs\"",
     "rehearse": "node keeper/fork/rehearse.mjs",
+    "stage": "node keeper/fork/stage.mjs",
+    "bridge": "node keeper/fork/eth-bridge.mjs",
     "live-checks": "node keeper/scripts/live-checks.mjs",
     "setup": "node keeper/scripts/setup.mjs",
     "seed-members": "node keeper/scripts/seed-members.mjs",

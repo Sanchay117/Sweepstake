@@ -1,7 +1,7 @@
 // Rehearses the whole Sweepstake loop on a local fork of the live testnet: deploy, open the pool,
 // members join, rewards arrive, a stranger claims the commission, the round is committed and drawn.
 // Start the fork first with `npm run fork`. Nothing here touches the real chain.
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { Interface } from "ethers";
 import { merkleProof, merkleRoot, winnerIndex, ticketFor } from "../../shared/draw.mjs";
@@ -67,6 +67,7 @@ const weight = { refTime: 500_000_000_000n, proofSize: 5_000_000n };
 const depositLimit = 10_000n * POT;
 
 // 1. Deploy the vault with the operator as keeper.
+const firstBlock = (await api.rpc.chain.getHeader()).number.toNumber();
 const keeperEvm = accountToEvm(u8aToHex(operator.publicKey));
 const code = artifact.bytecode.object + vaultAbi.encodeDeploy([keeperEvm]).slice(2);
 const before = (await api.query.system.account(operator.address)).data.free.toBigInt();
@@ -174,6 +175,12 @@ log("Ben unbonding", JSON.stringify(benMember.unbondingEras.toHuman()));
 check(benMember.points.toBigInt() === 0n, "Ben left using only the native pallet");
 const nextSnapshot = await poolSnapshot(api, [poolId], { exclude });
 check(nextSnapshot.total === 750n * POT, "the next snapshot drops an unbonding member and adds the late joiner");
+
+// Leave the details behind, so the website can be pointed at this fork.
+writeFileSync(
+  new URL("./deployment.fork.json", import.meta.url),
+  JSON.stringify({ run, vault, poolIds: [poolId], founder: keeperEvm, firstBlock, links: [] }, null, 2),
+);
 
 await api.disconnect();
 process.exit(process.exitCode ?? 0);

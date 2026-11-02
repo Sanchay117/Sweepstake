@@ -1,7 +1,6 @@
 // The post office counter: connects MetaMask and signs native pool calls through the EVM layer.
 import { parseUnits } from "ethers";
-import { evmToAccountHex } from "../../shared/address.mjs";
-import { bondExtra, joinPool, unbond } from "../../shared/calls.mjs";
+import { bondExtra, joinPool, unbond, withdrawUnbonded } from "../../shared/calls.mjs";
 import { evm, formatPot, POT, readBalance } from "./rpc.js";
 
 const PALLETS = "0x6d6f646c70792f70616464720000000000000000";
@@ -63,6 +62,7 @@ export function startCounter({ state, deployment, onWallet, onBonded }) {
   const connect = $("[data-connect]");
   const submit = $("[data-bond-submit]");
   const unbondButton = $("[data-unbond]");
+  const withdrawButton = $("[data-withdraw]");
   const form = $("[data-bond-form]");
 
   const showBalance = async () => {
@@ -117,25 +117,28 @@ export function startCounter({ state, deployment, onWallet, onBonded }) {
     }
   }
 
-  async function leave() {
+  /** Runs a call that concerns the wallet's own pool record. */
+  async function act(button, makeCall, done) {
     const mine = state.members.find((member) => member.address.toLowerCase() === state.wallet.toLowerCase());
     if (!mine) return;
-    unbondButton.disabled = true;
+    button.disabled = true;
     say("Waiting for your signature");
     try {
-      const hash = await sendCall(state.wallet, PALLETS, unbond(evmToAccountHex(state.wallet), mine.points));
-      say(`Unbonding started. Transaction ${hash}`);
+      const hash = await sendCall(state.wallet, PALLETS, makeCall(mine));
+      say(`${done} Transaction ${hash}`);
+      await showBalance();
       await onBonded();
     } catch (error) {
       say(friendly(error), { error: true });
     } finally {
-      unbondButton.disabled = false;
+      button.disabled = false;
     }
   }
 
   connect.addEventListener("click", connectWallet);
   form.addEventListener("submit", bond);
-  unbondButton.addEventListener("click", leave);
+  unbondButton.addEventListener("click", () => act(unbondButton, (mine) => unbond(mine.accountHex, mine.points), "Unbonding started."));
+  withdrawButton.addEventListener("click", () => act(withdrawButton, (mine) => withdrawUnbonded(mine.accountHex), "Withdrawn."));
 
   return { ensureWallet, sendCall, friendly, refresh: onBonded };
 }
