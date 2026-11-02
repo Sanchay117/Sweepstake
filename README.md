@@ -80,7 +80,7 @@ You need Node 22 or later and [Foundry](https://getfoundry.sh).
 git clone <this repository>
 cd sweepstake
 npm install
-forge install foundry-rs/forge-std --root contracts --no-git
+forge install foundry-rs/forge-std --root "$PWD/contracts" --no-git
 ```
 
 **Tests.** 21 contract tests, including fuzzing, and 11 tests of the shared draw maths and call encoding.
@@ -109,7 +109,17 @@ finish.
 
 ```bash
 npm run stage
+```
+
+The bridge keeps running, so give it a third terminal:
+
+```bash
 npm run bridge
+```
+
+And the website a fourth:
+
+```bash
 npm run dev --prefix web -- --mode fork
 ```
 
