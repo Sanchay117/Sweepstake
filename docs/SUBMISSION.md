@@ -19,10 +19,10 @@ Ecosystem DApps
 
 | | |
 |---|---|
-| Repository | [GitHub URL] |
-| Website | [website URL] |
-| Demo video | [video URL] |
-| Pitch deck | [deck URL] |
+| Repository | https://github.com/Sanchay117/Sweepstake |
+| Website | https://sanchay117.github.io/Sweepstake/ |
+| Demo video | https://youtu.be/3GjI5CV_i_4 |
+| Pitch deck | https://drive.google.com/file/d/1K8-xccby_MW8G6qP3Vxwcb2WR-X-Kk1W/view?usp=sharing |
 | Prize contract | `0x2C898e8E0511792A530AB7CFE6C7FC3FAa9C99aF` on Portaldot V3 testnet, https://scanner-testnet-v3.portaldot.dev/#/accounts/5D56pvJwuWPKwmuVisyq9Up8U97azqwBHGBiSojgsrd6nFyf |
 | First draw | `0x242d97f42ed8fe65722c1811fc7ab2247c0490342bd94903da844839e0e3eba7`, https://scanner-testnet-v3.portaldot.dev/#/blocks/290955?tab=events |
 | First draw paid from the website | `0xf869e1b04724f3f3b35eed6945adfd5d7b990723c07d2a99e01c283520116f82`, https://scanner-testnet-v3.portaldot.dev/#/blocks/291098?tab=events |
@@ -125,6 +125,6 @@ Not part of the form. Post it when voting opens on Nov 9 at 16:00 UTC.
 > yours. The pool's rewards go to one small contract, and each draw pays them to one member. Everyone keeps their
 > POT and stays in the next draw.
 >
-> Film, 2 minutes 51: [video URL]
-> Try it on the testnet: [website URL]
+> Film, 2 minutes 51: https://youtu.be/3GjI5CV_i_4
+> Try it on the testnet: https://sanchay117.github.io/Sweepstake/
 > Vote: [voting link]

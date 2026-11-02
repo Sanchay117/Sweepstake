@@ -11,12 +11,13 @@ or a contract with their deposit, because no contract ever holds it.
 
 | | |
 |---|---|
-| Website | Not published yet |
+| Website | https://sanchay117.github.io/Sweepstake/ |
 | Network | Portaldot V3 testnet, EVM chain 420420777, runtime spec 3002 |
 | Prize contract | [`0x2C898e8E0511792A530AB7CFE6C7FC3FAa9C99aF`](https://scanner-testnet-v3.portaldot.dev/#/accounts/5D56pvJwuWPKwmuVisyq9Up8U97azqwBHGBiSojgsrd6nFyf), live, see [Testnet deployment](#testnet-deployment) |
 | Pool | Nomination pool 1, the first on this testnet |
 | Draws | 3 paid on the live chain, the first in [block 290955](https://scanner-testnet-v3.portaldot.dev/#/blocks/290955?tab=events) |
-| Demo video | 2 minutes 51, filmed on the live testnet with a stand-in wallet, public link to follow |
+| Demo video | https://youtu.be/3GjI5CV_i_4, 2 minutes 51, filmed on the live testnet with a stand-in wallet |
+| Pitch deck | https://drive.google.com/file/d/1K8-xccby_MW8G6qP3Vxwcb2WR-X-Kk1W/view?usp=sharing |
 
 ## How it works
 
