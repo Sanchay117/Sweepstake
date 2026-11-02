@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sweepstake: Premium Prize Bonds for POT</title>
+    <meta
+      name="description"
+      content="Stake POT, keep it, and one member wins everyone's yield. No-loss prize savings on the Portaldot V3 testnet."
+    />
+    <meta name="theme-color" content="#F4DDB0" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <header class="bond" id="bond">
+      <canvas class="bond__print" data-bond-print aria-hidden="true"></canvas>
+      <div class="bond__inner">
+        <h1 class="wordmark" aria-label="Sweepstake">
+          <svg viewBox="0 0 1000 214" aria-hidden="true">
+            <defs>
+              <path id="arch" d="M 26 196 Q 500 34 974 196" />
+              <pattern id="hatch" width="5" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(-3)">
+                <rect width="5" height="3.6" fill="var(--nasik-deep)" />
+                <rect width="5" height="1.25" fill="var(--paper)" />
+              </pattern>
+            </defs>
+            <text class="wordmark__shade" transform="translate(5 6)">
+              <textPath href="#arch" startOffset="50%" text-anchor="middle">SWEEPSTAKE</textPath>
+            </text>
+            <text class="wordmark__face">
+              <textPath href="#arch" startOffset="50%" text-anchor="middle">SWEEPSTAKE</textPath>
+            </text>
+          </svg>
+        </h1>
+
+        <p class="bond__issue">Premium Prize Bonds 2026</p>
+
+        <p class="bond__serial">
+          <svg class="swash" viewBox="0 0 120 20" aria-hidden="true"><use href="#swash" /></svg>
+          <span class="bond__no">N<sup>o</sup></span>
+          <span class="wheels" data-wheels aria-label="Current block number"></span>
+          <svg class="swash swash--flip" viewBox="0 0 120 20" aria-hidden="true"><use href="#swash" /></svg>
+        </p>
+
+        <p class="bond__plain">Stake POT. Keep it.<br />One member wins everyone&rsquo;s yield.</p>
+
+        <div class="bond__promise">
+          <p>
+            Pool No. 1 holds the bearer&rsquo;s tPOT bonded in a keyless native account, and the bearer alone may
+            unbond it, payable in full after <span data-unbond-eras>672</span> eras.
+          </p>
+          <p>
+            No other interest will be payable on the Bond but <em>PRIZES</em>, to be determined by lottery in the manner
+            indicated on <a href="#reverse">the reverse</a>.
+          </p>
+        </div>
+
+        <dl class="fields">
+          <div>
+            <dt>Prize now</dt>
+            <dd data-field="prize">reading chain</dd>
+          </div>
+          <div>
+            <dt>Bonded</dt>
+            <dd data-field="bonded">reading chain</dd>
+          </div>
+          <div>
+            <dt>Staking pays</dt>
+            <dd data-field="apr">reading chain</dd>
+          </div>
+          <div>
+            <dt>This era ends</dt>
+            <dd data-field="era">reading chain</dd>
+          </div>
+        </dl>
+
+        <div class="bond__foot">
+          <a class="press" href="#counter">Bond tPOT</a>
+          <p class="order">
+            <span>By order of runtime spec 3002</span>
+            <em>No officer holds a key</em>
+          </p>
+        </div>
+
+        <p class="bond__imprint">Portaldot V3 testnet. tPOT has no value.</p>
+
+        <div class="postmark-slot" data-postmark></div>
+      </div>
+      <p class="bond__specimen" data-specimen hidden aria-label="Specimen: the pool is not open yet">Specimen</p>
+    </header>
+
+    <main>
+      <section class="turn" id="turn" aria-labelledby="turn-title">
+        <canvas class="turn__waves" data-waves aria-hidden="true"></canvas>
+        <div class="turn__inner">
+          <p class="label">Britain, 1956</p>
+          <div class="turn__stage" data-turn>
+            <h2 class="turn__quote" id="turn-title">&ldquo;a squalid raffle&rdquo;</h2>
+            <p class="turn__stamp">
+              <strong>&pound;137 billion</strong>
+              <span>in the draw, September 2026</span>
+            </p>
+          </div>
+          <p class="turn__who">
+            Harold Wilson on Premium Bonds, as Hansard recalled it in 1966. Each bond is &pound;1, and the government
+            buys it back at that price.
+          </p>
+          <p class="turn__answer">
+            Harold Macmillan told the Commons the saver was gambling <q>not with the capital but with the interest</q>.
+            That sentence is this whole product.
+          </p>
+        </div>
+      </section>
+
+      <section class="thread" id="thread" aria-labelledby="thread-title">
+        <div class="thread__text">
+          <p class="label">Chaupati, Bombay, 1963</p>
+          <h2 id="thread-title">India printed the idea on the bond.</h2>
+          <p>
+            The Government of India sold five rupee Premium Prize Bonds over post office counters: red in 1963, blue in
+            1964. Five rupees fifty came back after five years. Halfway down the promise sat one line.
+          </p>
+          <blockquote class="thread__line">
+            No other interest will be payable on the Bond but PRIZES, to be determined by lottery.
+          </blockquote>
+          <p>
+            Britain&rsquo;s draws came from ERNIE, a machine designed by Tommy Flowers and Harry Fensom of Colossus. It
+            read the noise in neon tubes, made 2,000 numbers an hour, and took three days over its first draw. The
+            Government Actuary&rsquo;s Department still tests its output every month.
+          </p>
+          <p>Portaldot already calls a staking deposit a bond. We only had to finish the sentence.</p>
+        </div>
+        <figure class="thread__exhibit" data-exhibit>
+          <img src="/exhibit-1963.webp" alt="A red five rupee Premium Prize Bond, 1963, with its Chaupati post office date stamp" loading="lazy" width="760" height="620" />
+          <figcaption>
+            Premium Prize Bond, five rupees, Government of India, 1963. India Security Press, Nasik Road. Date stamped
+            at Chaupati, Bombay.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="reverse" id="reverse" aria-labelledby="reverse-title">
+        <canvas class="reverse__print" data-reverse-print aria-hidden="true"></canvas>
+        <div class="reverse__inner">
+          <p class="label">The reverse</p>
+          <h2 id="reverse-title">The manner of the lottery</h2>
+          <table class="prizes" aria-label="Prizes in the current round">
+            <tbody>
+              <tr>
+                <th scope="row">1 Prize of 95% of everything the pool earned</th>
+                <td data-table="winner">not issued</td>
+              </tr>
+              <tr>
+                <th scope="row">1 Fee of 5% to the keeper who runs the draw</th>
+                <td data-table="fee">not issued</td>
+              </tr>
+              <tr class="prizes__total">
+                <th scope="row">Total this round</th>
+                <td data-table="total">not issued</td>
+              </tr>
+            </tbody>
+          </table>
+          <ol class="steps">
+            <li>
+              <h3>You bond.</h3>
+              <p>
+                Your wallet calls <code>nominationPools.join</code>. Your tPOT moves to Pool 1&rsquo;s own account, and
+                no person has a key to it. MetaMask can sign this, because V3 runs an Ethereum transaction as a native
+                call.
+              </p>
+            </li>
+            <li>
+              <h3>The pool stakes.</h3>
+              <p>It nominates a validator and earns <span data-text="apr">a staking reward</span>, counted every 6 hours.</p>
+            </li>
+            <li>
+              <h3>The pool pays no interest.</h3>
+              <p>
+                Its commission is 100%, payable to one Solidity contract of <span data-text="vaultBytes">1,785</span>
+                bytes, and the pool has given up the role that could change that. Whatever the contract holds is the
+                prize.
+              </p>
+            </li>
+            <li>
+              <h3>A number nobody knows yet.</h3>
+              <p>
+                The keeper commits a Merkle root of every bond and names the block it read them at. Five blocks later,
+                a block hash that did not exist at commit time picks the ticket.
+              </p>
+            </li>
+            <li>
+              <h3>One bond wins.</h3>
+              <p>
+                Anyone can submit the proof, from this page if they like. The contract pays 95% to the winner, and every
+                bond stays in the next draw.
+              </p>
+            </li>
+          </ol>
+          <p class="reverse__claim">
+            There is no vault of deposits. The only contract here has never held one, so the worst a bug can lose is one
+            prize.
+          </p>
+          <table class="ledger">
+            <caption>Same machine, new parts</caption>
+            <thead>
+              <tr>
+                <th scope="col">1956 to 1964</th>
+                <th scope="col">Portaldot V3</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bond</td>
+                <td>Bond, the pallet&rsquo;s own word</td>
+              </tr>
+              <tr>
+                <td>Interest at 4% a year</td>
+                <td>Staking rewards at <span data-text="apr">the live rate</span></td>
+              </tr>
+              <tr>
+                <td>Noise in a neon tube</td>
+                <td>A block hash that does not exist yet</td>
+              </tr>
+              <tr>
+                <td>The Government Actuary</td>
+                <td>Your browser</td>
+              </tr>
+              <tr>
+                <td>A post office counter</td>
+                <td>An account with no key</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="counter" id="counter" aria-labelledby="counter-title">
+        <div class="counter__form">
+          <p class="label">The counter</p>
+          <h2 id="counter-title">Bond tPOT</h2>
+          <form data-bond-form>
+            <label class="line">
+              <span>Bearer</span>
+              <output data-wallet-address>no wallet connected</output>
+            </label>
+            <label class="line">
+              <span>Balance</span>
+              <output data-wallet-balance>unknown</output>
+            </label>
+            <label class="line line--input">
+              <span>Amount</span>
+              <input data-bond-amount type="number" min="1" step="any" value="1" inputmode="decimal" required />
+            </label>
+            <label class="line">
+              <span>Place</span>
+              <output>Pool No. 1, Portaldot V3 testnet</output>
+            </label>
+            <div class="counter__actions">
+              <button class="press" type="button" data-connect>Connect MetaMask</button>
+              <button class="press" type="submit" data-bond-submit hidden>Bond tPOT</button>
+            </div>
+            <p class="counter__status" data-status role="status"></p>
+          </form>
+          <p class="counter__terms">
+            The minimum is 1 tPOT. Leaving takes <span data-unbond-eras>672</span> eras, which is
+            <span data-unbond-days>168</span> days on this testnet. That is the chain&rsquo;s staking rule, and it
+            applies to every staker on it. Your bond stays in the draw until you unbond.
+          </p>
+        </div>
+        <aside class="holding" data-holding>
+          <canvas class="holding__rosette" data-rosette aria-hidden="true"></canvas>
+          <div class="holding__body">
+            <p class="label">Your bond</p>
+            <p class="holding__empty" data-holding-empty>Connect a wallet to see your bond.</p>
+            <dl class="holding__facts" data-holding-facts hidden>
+              <div><dt>Tickets</dt><dd data-holding="tickets"></dd></div>
+              <div><dt>Odds next draw</dt><dd data-holding="odds"></dd></div>
+            </dl>
+            <button class="press press--quiet" type="button" data-unbond hidden>Unbond all</button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="register" id="register" aria-labelledby="register-title">
+        <div class="register__col">
+          <p class="label">The register</p>
+          <h2 id="register-title">Every bond, read from the chain</h2>
+          <table class="book">
+            <thead>
+              <tr><th scope="col">Bearer</th><th scope="col">Tickets</th><th scope="col">Odds</th></tr>
+            </thead>
+            <tbody data-register>
+              <tr><td colspan="3">No bonds issued yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="register__col">
+          <p class="label">The draws</p>
+          <h2>Check any draw yourself</h2>
+          <p>
+            ERNIE had the Government Actuary. Here your browser rebuilds the round from public chain state and lands on
+            the same winner, or says so if it does not.
+          </p>
+          <ul class="draws" data-draws>
+            <li>No draws yet.</li>
+          </ul>
+          <ol class="checks" data-checks hidden></ol>
+        </div>
+      </section>
+
+      <section class="proof" id="proof" aria-labelledby="proof-title">
+        <p class="label">Check it</p>
+        <h2 id="proof-title">Everything here is on the chain</h2>
+        <dl class="proof__list" data-proof></dl>
+        <h3>Limits we are not hiding</h3>
+        <ul class="limits">
+          <li>The keeper can post a false snapshot. It cannot hide one, because anyone can rebuild it. The contract does not stop it.</li>
+          <li>The draw uses a block hash. With two validators on this testnet, an author could withhold a block to change it.</li>
+          <li>A pool holds 32 members and the chain allows 16 pools. More members means more pools or a governance change.</li>
+          <li>Unbonding takes 672 eras here. Nobody can shorten that for you, including us.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="close">
+      <p class="close__line">No other interest will be payable on the Bond but <em>PRIZES</em>.</p>
+      <a class="press" href="#counter">Bond tPOT</a>
+      <div class="close__credits">
+        <p>
+          Sweepstake is testnet software on Portaldot V3. tPOT has no value and nothing here is an offer of anything.
+        </p>
+        <p>
+          Bond: Premium Prize Bond, Government of India, 1963 and 1964, India Security Press, Nasik Road, via Wikimedia
+          Commons, public domain. Our bond&rsquo;s engraving is generated in code.
+        </p>
+        <p>
+          History: Hansard, HC Deb 18 June 1956 vol 554 and 31 January 1966 vol 723. Premium Bonds and ERNIE figures from
+          NS&amp;I and Wikipedia. Sweepstake has no connection to NS&amp;I or the Government of India.
+        </p>
+        <p>Type: Besley by Owen Earl, Petit Formal Script by Impallari Type, Source Serif 4, IBM Plex Mono.</p>
+      </div>
+    </footer>
+
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="swash" viewBox="0 0 120 20">
+        <path
+          d="M2 10c10-7 18-7 26 0s16 7 24 0 16-7 24 0 16 7 24 0c5-4 9-5 12-3 3 3 0 7-3 6s-2-5 1-4"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.3"
+        />
+        <circle cx="2" cy="10" r="1.8" fill="currentColor" />
+      </symbol>
+    </svg>
+  </body>
+</html>
