@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from "react";
 import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame } from "remotion";
-import { OVERLAP, TEASER_FRAMES, type Plan, type Shot } from "./plan.ts";
+import { FPS, OVERLAP, TEASER_FRAMES, type Plan, type Shot } from "./plan.ts";
 import { Close } from "./scenes/Close.tsx";
 import { Check, Counter, Draw, Exit, Hero, Register } from "./scenes/Footage.tsx";
 import { Loop } from "./scenes/Loop.tsx";
@@ -80,6 +80,8 @@ const fade = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 const TEASER_VOICE = 1.4;
 /** Frames between two demo lines that count as a wait, not a breath. */
 const WAIT = 90;
+/** One pass of sfx/bed.wav. A looped Audio restarts its volume frame each pass, so the passes are laid out by hand. */
+const BED = 64 * FPS;
 
 /**
  * The teaser's score, then a quiet bed under the demo. Between lines the score climbs toward the
@@ -102,19 +104,22 @@ function Score({ plan }: { plan: Plan }) {
     return next.from - end > WAIT ? [[end, next.from]] : [];
   });
   const lift = (frame: number) => waits.reduce((most, [from, to]) => Math.max(most, interpolate(frame, [from, from + 20, to - 15, to], [0, 1, 1, 0], fade)), 0);
+  const bed = (frame: number) => {
+    const left = plan.total - frame;
+    return interpolate(frame - TEASER_FRAMES, [0, 90], [0, 0.12], fade) * interpolate(left, [0, 100], [0, 1], fade) * (1 + 1.4 * lift(frame));
+  };
+  const passes = Math.ceil((plan.total - TEASER_FRAMES) / BED);
   return (
     <>
       <Audio src={staticFile("sfx/teaser.wav")} volume={(f) => level(f) * ducked(f)} />
-      <Sequence from={TEASER_FRAMES} name="bed">
-        <Audio
-          src={staticFile("sfx/bed.wav")}
-          loop
-          volume={(f) => {
-            const left = plan.total - TEASER_FRAMES - f;
-            return interpolate(f, [0, 90], [0, 0.12], fade) * interpolate(left, [0, 100], [0, 1], fade) * (1 + 1.4 * lift(f + TEASER_FRAMES));
-          }}
-        />
-      </Sequence>
+      {Array.from({ length: passes }, (_, pass) => {
+        const from = TEASER_FRAMES + pass * BED;
+        return (
+          <Sequence key={pass} from={from} durationInFrames={BED} name={`bed ${pass + 1}`}>
+            <Audio src={staticFile("sfx/bed.wav")} volume={(f) => bed(from + f)} />
+          </Sequence>
+        );
+      })}
     </>
   );
 }
