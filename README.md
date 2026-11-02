@@ -15,8 +15,8 @@ or a contract with their deposit, because no contract ever holds it.
 | Network | Portaldot V3 testnet, EVM chain 420420777, runtime spec 3002 |
 | Prize contract | [`0x2C898e8E0511792A530AB7CFE6C7FC3FAa9C99aF`](https://scanner-testnet-v3.portaldot.dev/#/accounts/5D56pvJwuWPKwmuVisyq9Up8U97azqwBHGBiSojgsrd6nFyf), live, see [Testnet deployment](#testnet-deployment) |
 | Pool | Nomination pool 1, the first on this testnet |
-| First draw | [Paid 4.75 tPOT in block 290955](https://scanner-testnet-v3.portaldot.dev/#/blocks/290955?tab=events) |
-| Demo video | 2 minutes 38, filmed on a fork of the live chain, public link to follow |
+| Draws | 3 paid on the live chain, the first in [block 290955](https://scanner-testnet-v3.portaldot.dev/#/blocks/290955?tab=events) |
+| Demo video | 2 minutes 51, filmed on the live testnet with a stand-in wallet, public link to follow |
 
 ## How it works
 
@@ -64,17 +64,18 @@ pool, and anyone can leave using only the chain's own pallet.
 | Solidity bytecode runs on Revive | Deployed in block 290907, 1,785 bytes, and the code matches this repository's build | Passed live |
 | Ethereum transactions reach the pool pallet | The pool was opened, configured and joined entirely through the pallets address | Passed live |
 | 100% commission reaches the contract | A 5 tPOT reward moved from the pool to the vault | Passed live |
-| A stranger can claim it | Claim permission reads `Permissionless` live. A stranger claimed in the fork rehearsal | Passed live, claim by a stranger on fork |
+| A stranger can claim it | A wallet with no role moved 1 tPOT into the vault in block 291191 | Passed live |
 | `address(this).balance` sees that income | The contract paid out exactly what the pool sent it | Passed live |
 | The operator cannot redirect the commission after setup | Roles read `root: null`, and `eth_estimateGas` for `setCommission` answers `DoesNotHavePermission` | Passed live, dry run |
 | The off-chain ticket equals the contract's ticket | Draw 1, rebuilt with **Check it** on the website | Passed live |
 | The contract pays a native account | Draw 1 paid 4.75 of 5 tPOT, and 0.25 to the keeper | Passed live |
-| A browser can rebuild a draw | **Check it** on draw 1, all four steps | Passed live |
-| A browser can finish a draw | Website run against the fork | Passed on fork |
-| A member leaves with no help from the contract | `eth_estimateGas` for `unbond` from a member succeeds live. A full unbond ran in the fork rehearsal | Passed live, dry run |
+| A browser can rebuild a draw | **Check it** on all three draws | Passed live |
+| A browser can finish a draw | **Finish it** on the website paid draws 2 and 3, signed by a test wallet | Passed live |
+| A member joins and leaves with no help from the contract | Two test wallets bonded and unbonded from the website, in blocks 291093 to 291231. Their tPOT is free after the chain's 672 era wait | Passed live |
 | Ethereum RPC block hashes equal Solidity's `blockhash` | `npm run live-checks` | Passed live |
 | The node keeps old state, so old draws stay checkable | `npm run live-checks`, state read at block 1 | Passed live |
-| Staking rewards reach a draw | The pool's first rewards arrive once era 82 ends. Draw 1 was funded by a sponsor transfer | Waiting for era 82 |
+| Staking rewards reach a draw | The pool's first rewards arrive once era 82 ends. Draws 1 to 3 were funded by sponsor transfers | Waiting for era 82 |
+| A real MetaMask window signs | The website's wallet code is standard EIP-1193, but every signature so far came from a stand-in test wallet | Not tested yet |
 
 ## Run it yourself
 
@@ -152,7 +153,7 @@ Live on the Portaldot V3 testnet since November 2, 2026. `npm run setup` wrote t
 | Operator | `0xCB4a9671B44F58C48252D96642eB67ff35B06401`, native `5GfFjaXp9bEeT17Qe4Xn77n6uZxeGXKR72GVrj1hGwk6whWg` |
 | PrizeVault | `0x2C898e8E0511792A530AB7CFE6C7FC3FAa9C99aF`, native [`5D56pvJwuWPKwmuVisyq9Up8U97azqwBHGBiSojgsrd6nFyf`](https://scanner-testnet-v3.portaldot.dev/#/accounts/5D56pvJwuWPKwmuVisyq9Up8U97azqwBHGBiSojgsrd6nFyf) |
 | Nomination pool | Pool 1, stash `5EYCAe5ijiYfAXEth5DCfmQ9jnv4BFmdonKpbxwrc2nAw5uj`, nominating both active validators |
-| Bonded | 200 tPOT: a 20 tPOT founding bond, which is left out of the draw, and 3 test members of 60 tPOT |
+| Bonded | 200 tPOT: a 20 tPOT founding bond, which is left out of the draw, and 3 test members of 60 tPOT. Two 10 tPOT test bonds are unbonding |
 | Explorer | https://scanner-testnet-v3.portaldot.dev |
 
 Every step below is an Ethereum transaction signed by one key.
@@ -180,13 +181,30 @@ prize can be added by anyone. The website rebuilds it with **Check it**.
 | Winner | `0x44d11934fe9667104879A1570d74eD2B81e52a50`, 4.75 tPOT |
 | Keeper fee | 0.25 tPOT |
 
+**Draws 2 and 3.** These were sponsored too, and the keeper stopped after committing them. A test wallet finished each
+one with the website's **Finish it** button, which is what the demo video films. Each wallet also bonded 10 tPOT and
+unbonded from the website.
+
+| Step | Draw 2 | Draw 3 |
+|---|---|---|
+| Wallet | `0x9B6fDF6dCFb3Cd6d430A1DB5175D2e97D7784E14` | `0x7A9a95f779130cbBB6afA988791277f6A1009D4f` |
+| Committed at snapshot | Block 291071, `0xf32a49d6aedf50751986e92f402a54bf4da2bbaecc91bd2c9f5a725a4febbade` | Block 291203, `0xbb81590adb81250697c74f96483a2e5f7506b03cb845058dfd3d2a6b4ce5439e` |
+| Bonded | [Block 291093](https://scanner-testnet-v3.portaldot.dev/#/blocks/291093?tab=events), `0x169719c56abdfcf0884ec78b9bc83d026031deaad5268ec6261117fac86dd830` | [Block 291223](https://scanner-testnet-v3.portaldot.dev/#/blocks/291223?tab=events), `0x66622b291500616aa4dc0ff2956262be6dcdabc70a9a4cd8968fb28b6ec68053` |
+| Paid from the website | [Block 291098](https://scanner-testnet-v3.portaldot.dev/#/blocks/291098?tab=events), `0xf869e1b04724f3f3b35eed6945adfd5d7b990723c07d2a99e01c283520116f82` | [Block 291228](https://scanner-testnet-v3.portaldot.dev/#/blocks/291228?tab=events), `0x76fb26e34c4fb1472d1a5815c7fe579a9b01041ce039836ee09794f23c176b70` |
+| Winner | `0x44d11934fe9667104879A1570d74eD2B81e52a50`, 1.9 tPOT | `0x53AB03f9F8bD348fEFbC9E38E123B67bD18e648e`, 0.95 tPOT |
+| Unbonded | [Block 291101](https://scanner-testnet-v3.portaldot.dev/#/blocks/291101?tab=events), `0xf65326b3f8c104cbd08637a7ceb368395d5cfc93fde88d4ffe4de203716bb790` | [Block 291231](https://scanner-testnet-v3.portaldot.dev/#/blocks/291231?tab=events), `0xd9fb988a31b5656b787197d85b4a8b389655a329945cca54f56c652cfe05ef27` |
+
+The commission for draw 3 was claimed by a wallet with no role, in
+[block 291191](https://scanner-testnet-v3.portaldot.dev/#/blocks/291191?tab=events),
+`0x57ba2012ca03faa05041878aa007bdd3cba760c7c4850a06f299a426f9c827fc`.
+
 ## Repository
 
 ```text
 contracts/       PrizeVault.sol and its Foundry tests
 shared/          Draw maths, pallet call encoding and the ABI, used by keeper and website alike
 keeper/lib/      Chain, wallet and pool helpers
-keeper/scripts/  setup, seed-members, sponsor, crank and live-checks
+keeper/scripts/  setup, seed-members, sponsor, crank, film-wallet and live-checks
 keeper/fork/     Fork config, the full rehearsal, and the bridge that lets the website read a fork
 keeper/test/     Tests of the shared code
 web/             The website, with no backend: every number is read from the chain in the browser

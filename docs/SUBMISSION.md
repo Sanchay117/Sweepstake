@@ -25,6 +25,7 @@ Ecosystem DApps
 | Pitch deck | [deck URL] |
 | Prize contract | `0x2C898e8E0511792A530AB7CFE6C7FC3FAa9C99aF` on Portaldot V3 testnet, https://scanner-testnet-v3.portaldot.dev/#/accounts/5D56pvJwuWPKwmuVisyq9Up8U97azqwBHGBiSojgsrd6nFyf |
 | First draw | `0x242d97f42ed8fe65722c1811fc7ab2247c0490342bd94903da844839e0e3eba7`, https://scanner-testnet-v3.portaldot.dev/#/blocks/290955?tab=events |
+| First draw paid from the website | `0xf869e1b04724f3f3b35eed6945adfd5d7b990723c07d2a99e01c283520116f82`, https://scanner-testnet-v3.portaldot.dev/#/blocks/291098?tab=events |
 
 ## Description
 
@@ -73,17 +74,21 @@ is one prize.
 
 - **Live on the V3 testnet.** `PrizeVault` is deployed at `0x2C898e8E0511792A530AB7CFE6C7FC3FAa9C99aF`, and pool 1 is
   the first nomination pool on the testnet. It has 200 tPOT staked with both validators.
-- **A real draw has been paid.** Draw 1 moved a 5 tPOT sponsored prize from the pool to the contract, committed 3
-  members, took its ticket from block 290951, and paid 4.75 tPOT in block 290955. The website rebuilds that round from
+- **Three real draws have paid.** Draw 1 moved a 5 tPOT sponsored prize from the pool to the contract, committed 3
+  members, took its ticket from block 290951, and paid 4.75 tPOT in block 290955. The website rebuilds each round from
   public chain state and lands on the same winner.
+- **The website finishes draws.** Draws 2 and 3 were left open by the keeper and paid with the website's **Finish it**
+  button. The demo video films draw 3 live: a test wallet bonds, finishes the draw, checks it and unbonds.
+- **Nobody needs a role.** A wallet with no role moved a prize into the contract in block 291191, and the same page
+  that paid the draws also unbonded from the pool's native pallet.
 - **The renounce holds.** The pool's root and bouncer read null, and a dry run of the operator changing the commission
   answers `DoesNotHavePermission`.
 - 21 contract tests, including fuzzing, and 11 tests of the shared draw maths and call encoding.
 - A full rehearsal on a fork of the live chain: deploy, renounce, stake, claim, commit, draw, pay, unbond.
-- The website bonding, finishing a draw, checking it and unbonding on that fork, which is what the demo video films.
 - A fresh clone reproduces every step from the README.
 
-The README's "What has been proven" table says which claims passed on a fork and which passed live, and lists every
+The live draws so far ran on sponsored prizes, because staking rewards take about 12 hours to start. Every signature
+came from a stand-in test wallet. The README's "What has been proven" table says what passed live, and lists every
 transaction.
 
 ## Business model
@@ -120,6 +125,6 @@ Not part of the form. Post it when voting opens on Nov 9 at 16:00 UTC.
 > yours. The pool's rewards go to one small contract, and each draw pays them to one member. Everyone keeps their
 > POT and stays in the next draw.
 >
-> Film, 2 minutes 38: [video URL]
+> Film, 2 minutes 51: [video URL]
 > Try it on the testnet: [website URL]
 > Vote: [voting link]

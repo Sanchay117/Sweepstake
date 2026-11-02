@@ -28,7 +28,8 @@ file. One key does everything: it deploys the contract, opens the pool and runs 
 | Deploy `PrizeVault` | about 153 |
 | Founding bond and fees | about 21 |
 | Test members, if you seed them | 5 each, plus their bond |
-| Keeper fees | about 1 per draw |
+| First commit | about 8, mostly a storage deposit |
+| Keeper fees after that | under 0.1 per draw |
 
 ## 3. Build and deploy
 
@@ -70,7 +71,8 @@ npm run crank
 ```
 
 One turn pays out the last era if nobody has, claims commission, then commits and draws. It reads what the chain
-needs next and does only that, so it is safe to rerun.
+needs next and does only that, so it is safe to rerun. With `npm run crank -- --leave-open` it stops after the commit,
+so a visitor can finish the draw from the website.
 
 To run it every era, add `OPERATOR_PRIVATE_KEY` as a repository secret. The workflow in
 `.github/workflows/keeper.yml` then runs it on a schedule.
