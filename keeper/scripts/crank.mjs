@@ -14,7 +14,9 @@ const deployment = JSON.parse(readFileSync(new URL("../../web/src/deployment.jso
 if (!deployment.vault) throw new Error("Nothing is deployed yet. Run keeper/scripts/setup.mjs first.");
 
 const WEI_PER_PLANCK = 10_000n;
-const NOTHING_TO_DO = /AlreadyClaimed|NoPendingCommission|InvalidPage|InvalidEraToReward|NotStash/;
+/** Blocks to stay clear of the head. Gas estimates run at the head itself, and the contract wants a past block. */
+const ETH_LAG = 3;
+const NOTHING_TO_DO =/AlreadyClaimed|NoPendingCommission|InvalidPage|InvalidEraToReward|NotStash/;
 
 const api = await connect();
 const wallet = operatorWallet();
@@ -50,7 +52,7 @@ async function snapshotAt(block) {
 }
 
 async function commit() {
-  const block = await headNumber(api);
+  const block = (await headNumber(api)) - ETH_LAG;
   const snapshot = await snapshotAt(block);
   if (snapshot.total === 0n) {
     console.log("No members yet, so there is nothing to draw.");
@@ -67,7 +69,7 @@ async function commit() {
 async function draw() {
   const round = await vault.round();
   const drawBlock = Number(await vault.drawBlock());
-  await waitForBlock(api, drawBlock + 1);
+  await waitForBlock(api, drawBlock + ETH_LAG);
 
   const logs = await vault.queryFilter(vault.filters.Committed(round), deployment.firstBlock);
   const { root, totalWeight, snapshotBlock } = logs.at(-1).args;

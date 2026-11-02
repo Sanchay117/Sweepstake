@@ -24,5 +24,5 @@ export const formatPot = (planck, digits = 4) => {
   const value = BigInt(planck);
   const whole = value / POT;
   const fraction = (value % POT).toString().padStart(14, "0").slice(0, digits);
-  return `${whole}.${fraction}`;
+  return digits === 0 ? `${whole}` : `${whole}.${fraction}`;
 };

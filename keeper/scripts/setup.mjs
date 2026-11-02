@@ -2,8 +2,9 @@
 // up the pool's root role so nobody can redirect the commission. Run it once, with a funded operator.
 import "dotenv/config";
 import { readFileSync, writeFileSync } from "node:fs";
+import { Interface } from "ethers";
 import { connect, headNumber } from "../lib/chain.mjs";
-import { loadArtifact, operatorWallet, send, sendPalletCall, vaultAbi } from "../lib/evm.mjs";
+import { loadArtifact, operatorWallet, send, sendPalletCall } from "../lib/evm.mjs";
 import { evmToAccountHex, evmToSs58, formatPot, POT } from "../lib/network.mjs";
 
 const DEPLOYMENT = new URL("../../web/src/deployment.json", import.meta.url);
@@ -29,7 +30,8 @@ const note = (name, receipt) => {
 
 // 1. The vault, with the operator as keeper.
 const firstBlock = await headNumber(api);
-const code = loadArtifact().bytecode.object + vaultAbi.encodeDeploy([wallet.address]).slice(2);
+const artifact = loadArtifact();
+const code = artifact.bytecode.object + new Interface(artifact.abi).encodeDeploy([wallet.address]).slice(2);
 const deployed = note("Contract deployed", await send(wallet, { data: code }));
 const vault = deployed.contractAddress;
 console.log(`vault ${vault}`);
