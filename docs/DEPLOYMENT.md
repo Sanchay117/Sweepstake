@@ -72,6 +72,10 @@ npm run build --prefix web
 `web/dist` is a static site, and any static host will serve it. With `web/src/deployment.json` filled in, the
 "Specimen" overprint disappears and the page shows the live pool.
 
+On GitHub, set **Settings > Pages > Source** to **GitHub Actions**. Every push to `main` then publishes the site
+through `.github/workflows/pages.yml`. On another host, set `SITE_URL` during the build so link previews can find
+`og.png`.
+
 ## Check it worked
 
 ```bash
