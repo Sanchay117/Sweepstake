@@ -13,6 +13,7 @@
     "setup": "node keeper/scripts/setup.mjs",
     "seed-members": "node keeper/scripts/seed-members.mjs",
     "sponsor": "node keeper/scripts/sponsor.mjs",
+    "film-wallet": "node keeper/scripts/film-wallet.mjs",
     "crank": "node keeper/scripts/crank.mjs"
   },
   "devDependencies": {

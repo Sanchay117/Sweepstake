@@ -1,5 +1,6 @@
 // One turn of the keeper. It reads what the chain needs next and does only that, so it is safe to
-// rerun at any time. Every step here except the commit could be done by anyone.
+// rerun at any time. Every step here except the commit could be done by anyone. With --leave-open
+// it stops after the commit, so a visitor can finish the draw from the website.
 import "dotenv/config";
 import { readFileSync } from "node:fs";
 import { Contract } from "ethers";
@@ -98,7 +99,7 @@ if (open !== 0 && head <= open + DRAW_WINDOW) {
   await draw();
 } else if (prize === 0n) {
   console.log("The prize is empty, so this turn stops here.");
-} else if (await commit()) {
+} else if ((await commit()) && !process.argv.includes("--leave-open")) {
   await draw();
 }
 
