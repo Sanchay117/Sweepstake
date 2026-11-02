@@ -1,0 +1,18 @@
+{
+  "name": "sweepstake",
+  "private": true,
+  "type": "module",
+  "workspaces": ["keeper", "web"],
+  "scripts": {
+    "fork": "chopsticks --config=keeper/fork/chopsticks.yml",
+    "test": "node --test \"keeper/test/*.test.mjs\"",
+    "rehearse": "node keeper/fork/rehearse.mjs",
+    "live-checks": "node keeper/scripts/live-checks.mjs",
+    "setup": "node keeper/scripts/setup.mjs",
+    "seed-members": "node keeper/scripts/seed-members.mjs",
+    "crank": "node keeper/scripts/crank.mjs"
+  },
+  "devDependencies": {
+    "@acala-network/chopsticks": "^1.2.0"
+  }
+}

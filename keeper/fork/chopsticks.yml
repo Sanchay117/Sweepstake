@@ -1,0 +1,10 @@
+# A local fork of the Portaldot V3 testnet, for rehearsing the full loop with no real tPOT.
+endpoint: wss://test-node-v3.portaldot.dev
+port: 8000
+build-block-mode: Instant
+mock-signature-host: true
+runtime-log-level: 0
+# The public node takes minutes to serve the runtime blob, so wait longer than the 60s default.
+rpc-timeout: 600000
+# The executor has no statement-store host function. Only the unused Statement pallet needs it.
+allow-unresolved-imports: true
