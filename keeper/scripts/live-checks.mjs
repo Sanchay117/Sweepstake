@@ -5,6 +5,7 @@ import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/util-crypto";
 import { JsonRpcProvider, Wallet } from "ethers";
 import { bondExtra, joinPool } from "../../shared/calls.mjs";
+import { rpcMessage } from "../lib/evm.mjs";
 import { accountToEvm, formatPot, NETWORK, PALLETS_ADDRESS, POT } from "../lib/network.mjs";
 
 const provider = new WsProvider(NETWORK.ws, 2500, {}, 300_000);
@@ -49,7 +50,7 @@ for (const [name, data] of [["join", joinPool(POT, 1)], ["bondExtra", bondExtra(
     const gas = await evm.send("eth_estimateGas", [{ from, to: PALLETS_ADDRESS, data }]);
     log(`${name} estimate from ${from}: ${BigInt(gas)}`);
   } catch (error) {
-    log(`${name} estimate from ${from} failed: ${error.error?.message ?? error.message}`);
+    log(`${name} estimate from ${from} answered: ${rpcMessage(error)}`);
   }
 }
 
