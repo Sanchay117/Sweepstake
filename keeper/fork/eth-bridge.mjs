@@ -15,7 +15,8 @@ const provider = new WsProvider("ws://127.0.0.1:8000", 2500, {}, 900_000);
 const api = await ApiPromise.create({ provider, noInitWarn: true });
 const keyring = new Keyring({ type: "sr25519", ss58Format: 42 });
 const bank = keyring.addFromUri("//SweepstakeBridgeBank");
-const visitor = keyring.addFromUri("//SweepstakeBridgeVisitor");
+// A new visitor on every start, so each run can bond from a clean wallet.
+const visitor = keyring.addFromUri(`//SweepstakeBridgeVisitor/${Date.now()}`);
 
 async function execute(tx, signer) {
   const { nonce } = await api.query.system.account(signer.address);
