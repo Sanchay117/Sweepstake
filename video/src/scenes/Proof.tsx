@@ -6,17 +6,21 @@ import { Waves } from "../ui/engraving.tsx";
 import { clamp, Ground, Hatch, Label, ramp, Slam, Stamp } from "../ui/kit.tsx";
 import { LoopedSfx, Sfx } from "../ui/Sfx.tsx";
 
-// Real output, copied from `npm run rehearse`, `forge test` and `npm test`.
-const REHEARSE = [
-  "vault 0x88b07a7098f3162d8b95a7a42aab5272177e2ae0",
-  "PASS  pool pays 100% commission to the vault",
-  "PASS  the pool has no root and no bouncer",
-  "PASS  the operator can no longer redirect the commission",
-  "PASS  a stranger moved all 5 tPOT of rewards into the vault",
-  "PASS  the ticket rebuilt off chain matches the contract",
-  "PASS  the winner's native account was paid by the Solidity contract",
-  "PASS  Cleo's principal is unchanged after the draw",
-  "PASS  Ben left using only the native pallet",
+// Real output from the live testnet, with hashes shortened, plus `forge test` and `npm test`.
+const SETUP = [
+  "vault 0x2C898e8E0511792A530AB7CFE6C7FC3FAa9C99aF",
+  "Pool opened: 0x02a3...fbb3 in block 290908",
+  "Commission set to 100%: 0x24ac...85b1 in block 290909",
+  "Root role renounced: 0x4ed3...b9dc in block 290912",
+];
+const CRANK = [
+  "prize now 5.0000 tPOT",
+  "committed 3 members at block 290941: 0x7ae9...3141",
+  "draw 1: ticket 11010863810202332 went to 0x44d1...2a50",
+];
+const CHECKS = [
+  "block 291122: revive 0xda9c...1e7c eth 0xda9c...1e7c MATCH",
+  "state at block 1 (291126 old): available",
 ];
 const FORGE = ["21 tests passed, 0 failed, 0 skipped (21 total tests)"];
 const NODE = ["tests 11   pass 11   fail 0"];
@@ -42,17 +46,9 @@ function Run({ entry }: { entry: Entry }) {
       </div>
       {entry.lines.map((line, i) => {
         if (frame < first + i * entry.pace) return null;
-        const pass = line.startsWith("PASS");
         return (
           <div key={line} style={{ color: ink.tint, whiteSpace: "pre" }}>
-            {pass ? (
-              <>
-                <span style={{ color: "#8fd0a0", fontWeight: 600 }}>PASS</span>
-                {line.slice(4)}
-              </>
-            ) : (
-              line
-            )}
+            {line}
           </div>
         );
       })}
@@ -62,16 +58,19 @@ function Run({ entry }: { entry: Entry }) {
 
 export function Proof({ shot }: SceneProps) {
   const frame = useCurrentFrame();
-  const fork = cue(shot, "fork");
+  const live = cue(shot, "live");
+  const real = cue(shot, "real");
   const thirty = cue(shot, "thirty");
   const tests = cue(shot, "tests");
   const fresh = cue(shot, "fresh");
   const entries: Entry[] = [
-    { command: "npm run rehearse", lines: REHEARSE, at: 2, pace: 8 },
+    { command: "npm run setup", lines: SETUP, at: 2, pace: 8 },
+    { command: "npm run crank", lines: CRANK, at: real - 20, pace: 10 },
+    { command: "npm run live-checks", lines: CHECKS, at: thirty - 50, pace: 8 },
     { command: "forge test", lines: FORGE, at: thirty - 10, pace: 4 },
     { command: "npm test", lines: NODE, at: thirty + 8, pace: 4 },
   ];
-  const tag = ramp(frame, fork, 12);
+  const tag = ramp(frame, live, 12);
   return (
     <Ground tone="night" still>
       <Waves alpha={0.13} phase={3.4} />
@@ -92,7 +91,7 @@ export function Proof({ shot }: SceneProps) {
       <div style={{ position: "absolute", left: 1270, right: 60, top: 56, height: 800, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
         <div style={{ opacity: tag, transform: `translateY(${(1 - tag) * 14}px)` }}>
           <Label color={ink.paper} size={20} style={{ letterSpacing: 2, lineHeight: 1.5 }}>
-            Fork of the live chain
+            Live V3 testnet
             <br />
             Stand-in wallet
           </Label>
@@ -113,6 +112,8 @@ export function Proof({ shot }: SceneProps) {
       </div>
 
       <LoopedSfx name="typing" from={2} frames={12} volume={0.16} />
+      <LoopedSfx name="typing" from={real - 20} frames={12} volume={0.16} />
+      <LoopedSfx name="typing" from={thirty - 50} frames={14} volume={0.16} />
       <LoopedSfx name="typing" from={thirty - 10} frames={22} volume={0.16} />
       <Sfx name="press" at={tests} volume={0.5} />
       <Sfx name="stamp" at={fresh} volume={0.6} />

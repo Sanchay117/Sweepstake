@@ -1,15 +1,16 @@
 // Films the real website with Chrome's screencast, resampled to a constant 30 fps and encoded by
-// ffmpeg, while a stand-in wallet signs on the fork. Writes:
+// ffmpeg, while a stand-in wallet signs real transactions on the live testnet. Writes:
 //
 //   public/capture/site.mp4        the footage
 //   public/capture/site.json       the second offsets the film cuts on
 //   public/capture/layers/*.png    the bond taken apart, so the teaser can print it layer by layer
 //                                  and land exactly on the real page
 //
-// Start the fork, bridge and fork site first, run `npm run stage` for an open draw, and restart the
-// bridge for a clean visitor. Each scene holds for as long as its narration, so voice first.
+// Start the website and `npm run film-wallet` with a fresh wallet number, and leave a draw open with
+// `npm run crank -- --leave-open`. Each take bonds and unbonds for real, and an unbonded wallet is
+// locked for 168 days. Each scene holds for as long as its narration, so voice first.
 //
-//   node scripts/capture.ts [--url http://localhost:5199]
+//   node scripts/capture.ts [--url http://localhost:5198] [--bond 10]
 
 import { spawn } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -28,7 +29,10 @@ const flag = (name: string, fallback: string) => {
   const i = args.indexOf(name);
   return i >= 0 ? args[i + 1] : fallback;
 };
-const url = flag("--url", "http://localhost:5199");
+const url = flag("--url", "http://localhost:5198");
+const bond = flag("--bond", "10");
+/** A live transaction needs a block, and the receipt poll, on top of the wait for a slow node. */
+const CHAIN_WAIT = 120_000;
 
 const FPS = 30;
 const VIEW = { width: 1600, height: 900 };
@@ -72,7 +76,7 @@ const mark = (name: string) => {
 };
 const hold = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-// The stand-in for MetaMask: the bridge signs as its test visitor and runs the call on the fork.
+// The stand-in for MetaMask: keeper/scripts/film-wallet.mjs signs each call and sends it to the chain.
 const wallet = `
   const rpc = async (method, params = []) => {
     const response = await fetch("http://127.0.0.1:8545", {
@@ -229,11 +233,11 @@ try {
   await page.waitForSelector("[data-bond-submit]:not([hidden])");
   await hold(900);
   await page.locator("[data-bond-amount]").click({ clickCount: 3 });
-  await page.keyboard.type("250", { delay: 150 });
+  await page.keyboard.type(bond, { delay: 150 });
   await hold(500);
   await press("[data-bond-submit]");
   mark("bond");
-  await page.waitForFunction(() => /^Bonded\./.test(document.querySelector("[data-status]")!.textContent ?? ""), null, { timeout: 60_000 });
+  await page.waitForFunction(() => /^Bonded\./.test(document.querySelector("[data-status]")!.textContent ?? ""), null, { timeout: CHAIN_WAIT });
   mark("bonded");
   await until("counter", need("counter"));
 
@@ -246,7 +250,7 @@ try {
   await until("draw", spoken("draw", "anyone") - 0.9);
   await press("finish", page.getByRole("button", { name: /finish it/i }));
   mark("finish");
-  await page.waitForFunction(() => ![...document.querySelectorAll("[data-draws] button")].some((b) => /finish/i.test(b.textContent ?? "")), null, { timeout: 60_000 });
+  await page.waitForFunction(() => ![...document.querySelectorAll("[data-draws] button")].some((b) => /finish/i.test(b.textContent ?? "")), null, { timeout: CHAIN_WAIT });
   mark("paid");
   await until("draw", need("draw"));
 
@@ -254,7 +258,7 @@ try {
   await hold(200);
   await press("check", page.getByRole("button", { name: /check it/i }).first());
   mark("checking");
-  await page.waitForFunction(() => document.querySelectorAll("[data-checks] li").length >= 4, null, { timeout: 60_000 });
+  await page.waitForFunction(() => document.querySelectorAll("[data-checks] li").length >= 4, null, { timeout: CHAIN_WAIT });
   mark("checked");
   await until("check", need("check"));
 
@@ -263,8 +267,9 @@ try {
   await hold(300);
   await press("[data-unbond]");
   mark("unbond");
-  await page.waitForFunction(() => /^Unbonding started/.test(document.querySelector("[data-status]")!.textContent ?? ""), null, { timeout: 60_000 });
+  await page.waitForFunction(() => /^Unbonding started/.test(document.querySelector("[data-status]")!.textContent ?? ""), null, { timeout: CHAIN_WAIT });
   mark("unbonded");
+  await hold(3000); // The receipt, and the page refreshing around it.
   await until("exit", need("exit"));
   mark("end");
 } finally {

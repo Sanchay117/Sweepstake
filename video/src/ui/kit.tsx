@@ -193,8 +193,8 @@ export function BrowserFrame({ children, corners = 12 }: { children: ReactNode; 
           <span key={c} style={{ width: 13, height: 13, borderRadius: 7, background: c }} />
         ))}
         <div style={{ marginLeft: 14, flex: 1, height: 26, borderRadius: 4, background: ink.paper, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 14px", fontFamily: fonts.mono, fontSize: 15, color: ink.nasikDeep }}>
-          <span>localhost:5199</span>
-          <span style={{ color: ink.vermilion }}>fork of the live testnet, stand-in wallet</span>
+          <span>localhost:5198</span>
+          <span style={{ color: ink.vermilion }}>live Portaldot V3 testnet, stand-in wallet</span>
         </div>
       </div>
       <div style={{ position: "relative", width: FRAME.w, height: FRAME.h, overflow: "hidden" }}>{children}</div>

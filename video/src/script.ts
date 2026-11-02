@@ -87,7 +87,7 @@ export const DEMO: Line[] = [
   },
   {
     id: "proof",
-    text: "Everything here ran on a fork of the live chain, with a stand-in wallet. Thirty two tests pass, and a fresh clone reproduces every step.",
+    text: "Everything you just saw ran on Portaldot's live testnet, with a stand-in wallet. Real draws have already paid out. Thirty two tests pass, and a fresh clone reproduces every step.",
     lead: 0.5,
     tail: 0.7,
   },

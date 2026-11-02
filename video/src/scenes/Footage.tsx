@@ -177,7 +177,7 @@ export function Register({ shot, plan }: SceneProps) {
   const mark = ramp(frame, 150, 14);
   return (
     <Filmed plan={plan} shot={shot}>
-      <div style={{ ...box(244, 234, 522, 33), border: `3px solid ${ink.vermilion}`, borderRadius: 3, opacity: mark, boxSizing: "border-box" }} />
+      <div style={{ ...box(244, 304, 522, 33), border: `3px solid ${ink.vermilion}`, borderRadius: 3, opacity: mark, boxSizing: "border-box" }} />
     </Filmed>
   );
 }
