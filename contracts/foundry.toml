@@ -1,0 +1,15 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc = "0.8.28"
+evm_version = "cancun"
+via_ir = true
+optimizer = true
+optimizer_runs = 1
+# Every deployed byte locks about 0.08 tPOT on Portaldot V3, so drop the metadata trailer.
+bytecode_hash = "none"
+cbor_metadata = false
+
+[fuzz]
+runs = 512
