@@ -13,7 +13,9 @@ or a contract with their deposit, because no contract ever holds it.
 |---|---|
 | Website | Not published yet |
 | Network | Portaldot V3 testnet, EVM chain 420420777, runtime spec 3002 |
-| Prize contract | Not deployed yet, see [Testnet deployment](#testnet-deployment) |
+| Prize contract | [`0x2C898e8E0511792A530AB7CFE6C7FC3FAa9C99aF`](https://scanner-testnet-v3.portaldot.dev/#/accounts/5D56pvJwuWPKwmuVisyq9Up8U97azqwBHGBiSojgsrd6nFyf), live, see [Testnet deployment](#testnet-deployment) |
+| Pool | Nomination pool 1, the first on this testnet |
+| First draw | [Paid 4.75 tPOT in block 290955](https://scanner-testnet-v3.portaldot.dev/#/blocks/290955?tab=events) |
 | Demo video | 2 minutes 38, filmed on a fork of the live chain, public link to follow |
 
 ## How it works
@@ -59,18 +61,20 @@ pool, and anyone can leave using only the chain's own pallet.
 
 | Claim | How it was checked | Status |
 |---|---|---|
-| Solidity bytecode runs on Revive | Deployed on a fork of the live chain | Passed on fork |
-| 100% commission reaches the contract, and a stranger can claim it | Fork rehearsal, step 4 | Passed on fork |
-| `address(this).balance` sees that income | Fork rehearsal | Passed on fork |
-| The operator cannot redirect the commission after setup | Fork rehearsal, expects `DoesNotHavePermission` | Passed on fork |
-| The off-chain ticket equals the contract's ticket | Fork rehearsal | Passed on fork |
-| The contract pays a native account | Fork rehearsal, the winner received 4.75 of 5 tPOT | Passed on fork |
-| A member leaves with no help from the contract | Fork rehearsal, `unbond` | Passed on fork |
-| A browser can rebuild a draw and finish one | Website run against the fork | Passed on fork |
-| An Ethereum transaction reaches the pool pallet | `eth_estimateGas` on the live chain answers `PoolNotFound` from pallet 62 | Passed live, dry run |
+| Solidity bytecode runs on Revive | Deployed in block 290907, 1,785 bytes, and the code matches this repository's build | Passed live |
+| Ethereum transactions reach the pool pallet | The pool was opened, configured and joined entirely through the pallets address | Passed live |
+| 100% commission reaches the contract | A 5 tPOT reward moved from the pool to the vault | Passed live |
+| A stranger can claim it | Claim permission reads `Permissionless` live. A stranger claimed in the fork rehearsal | Passed live, claim by a stranger on fork |
+| `address(this).balance` sees that income | The contract paid out exactly what the pool sent it | Passed live |
+| The operator cannot redirect the commission after setup | Roles read `root: null`, and `eth_estimateGas` for `setCommission` answers `DoesNotHavePermission` | Passed live, dry run |
+| The off-chain ticket equals the contract's ticket | Draw 1, rebuilt with **Check it** on the website | Passed live |
+| The contract pays a native account | Draw 1 paid 4.75 of 5 tPOT, and 0.25 to the keeper | Passed live |
+| A browser can rebuild a draw | **Check it** on draw 1, all four steps | Passed live |
+| A browser can finish a draw | Website run against the fork | Passed on fork |
+| A member leaves with no help from the contract | `eth_estimateGas` for `unbond` from a member succeeds live. A full unbond ran in the fork rehearsal | Passed live, dry run |
 | Ethereum RPC block hashes equal Solidity's `blockhash` | `npm run live-checks` | Passed live |
 | The node keeps old state, so old draws stay checkable | `npm run live-checks`, state read at block 1 | Passed live |
-| The whole loop with real rewards | Live deployment | Waiting for testnet tPOT |
+| Staking rewards reach a draw | The pool's first rewards arrive once era 82 ends. Draw 1 was funded by a sponsor transfer | Waiting for era 82 |
 
 ## Run it yourself
 
@@ -140,16 +144,41 @@ is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Testnet deployment
 
-Not deployed yet. The operator is waiting for testnet tPOT. `npm run setup` writes every address, block and
-explorer link to [web/src/deployment.json](web/src/deployment.json), and the website's proof section reads from
-that file.
+Live on the Portaldot V3 testnet since November 2, 2026. `npm run setup` wrote these addresses and blocks to
+[web/src/deployment.json](web/src/deployment.json), and the website's proof section reads from that file.
 
 | Item | Value |
 |---|---|
 | Operator | `0xCB4a9671B44F58C48252D96642eB67ff35B06401`, native `5GfFjaXp9bEeT17Qe4Xn77n6uZxeGXKR72GVrj1hGwk6whWg` |
-| PrizeVault | Not deployed yet |
-| Nomination pool | Not opened yet |
+| PrizeVault | `0x2C898e8E0511792A530AB7CFE6C7FC3FAa9C99aF`, native [`5D56pvJwuWPKwmuVisyq9Up8U97azqwBHGBiSojgsrd6nFyf`](https://scanner-testnet-v3.portaldot.dev/#/accounts/5D56pvJwuWPKwmuVisyq9Up8U97azqwBHGBiSojgsrd6nFyf) |
+| Nomination pool | Pool 1, stash `5EYCAe5ijiYfAXEth5DCfmQ9jnv4BFmdonKpbxwrc2nAw5uj`, nominating both active validators |
+| Bonded | 200 tPOT: a 20 tPOT founding bond, which is left out of the draw, and 3 test members of 60 tPOT |
 | Explorer | https://scanner-testnet-v3.portaldot.dev |
+
+Every step below is an Ethereum transaction signed by one key.
+
+| Step | Block | Transaction |
+|---|---|---|
+| Contract deployed | [290907](https://scanner-testnet-v3.portaldot.dev/#/blocks/290907?tab=events) | `0xf862cbc0bada374dea66db720cc8e21fd2686fd51d14e6b8d3909f4fe26988b1` |
+| Pool opened | [290908](https://scanner-testnet-v3.portaldot.dev/#/blocks/290908?tab=events) | `0x02a34d03df943e15b3fb710f13dc6d70c304b7ba66ea9033f47020c58d62fbb3` |
+| Commission set to 100% | [290909](https://scanner-testnet-v3.portaldot.dev/#/blocks/290909?tab=events) | `0x24ac46f22f41011f94d478e99980954b16d1e16b8dca25db0b0369ea778e85b1` |
+| Commission claim opened to anyone | [290910](https://scanner-testnet-v3.portaldot.dev/#/blocks/290910?tab=events) | `0x47e9dc6f9952213cff16330146beeed072962ee68e24c7ce578ead59052ac272` |
+| Pool nominated | [290911](https://scanner-testnet-v3.portaldot.dev/#/blocks/290911?tab=events) | `0x01d88594b03b7bfa9a2f7e8192586ea04c6529d2506f84c6347a76287fe88696` |
+| Root role renounced | [290912](https://scanner-testnet-v3.portaldot.dev/#/blocks/290912?tab=events) | `0x4ed3a5052bc009edce214d1a9bcc3bb0fc19b0ca40fefdd019dd5502e201b9dc` |
+
+**Draw 1.** A 5 tPOT sponsor transfer funded it, because staking rewards take two eras to arrive, and that showed a
+prize can be added by anyone. The website rebuilds it with **Check it**.
+
+| Step | Value |
+|---|---|
+| Sponsor transfer | `0xa36750534f2caa0581f05bb692461430eff017c3b60447feca6cdf6fbeb6f00f` |
+| Commission claimed into the vault | `0x7894c5a422ef99666b36487087d0f1357329d5ff635cea559595cb9b1bbf306b` |
+| Snapshot | Block 290941, 3 members, 180 tPOT |
+| Committed | `0x7ae90c7eae694a9ecb9b2bedbc15ccba7acdafe20f4951f2e92a76e90dbd3141` |
+| Draw block | 290951, ticket 11010863810202332 |
+| Paid | [Block 290955](https://scanner-testnet-v3.portaldot.dev/#/blocks/290955?tab=events), `0x242d97f42ed8fe65722c1811fc7ab2247c0490342bd94903da844839e0e3eba7` |
+| Winner | `0x44d11934fe9667104879A1570d74eD2B81e52a50`, 4.75 tPOT |
+| Keeper fee | 0.25 tPOT |
 
 ## Repository
 
@@ -157,7 +186,7 @@ that file.
 contracts/       PrizeVault.sol and its Foundry tests
 shared/          Draw maths, pallet call encoding and the ABI, used by keeper and website alike
 keeper/lib/      Chain, wallet and pool helpers
-keeper/scripts/  setup, seed-members, crank and live-checks
+keeper/scripts/  setup, seed-members, sponsor, crank and live-checks
 keeper/fork/     Fork config, the full rehearsal, and the bridge that lets the website read a fork
 keeper/test/     Tests of the shared code
 web/             The website, with no backend: every number is read from the chain in the browser

@@ -1,7 +1,7 @@
 # DoraHacks submission
 
-Paste these fields into the BUIDL form. Square brackets mark what can only be filled in after the live deployment
-and the public repository exist.
+Paste these fields into the BUIDL form. Square brackets mark what can only be filled in once the public repository,
+website and video are up.
 
 ## Name
 
@@ -23,8 +23,8 @@ Ecosystem DApps
 | Website | [website URL] |
 | Demo video | [video URL] |
 | Pitch deck | [deck URL] |
-| Prize contract | [vault address] on Portaldot V3 testnet, [explorer link] |
-| First draw | [draw transaction hash], [explorer link] |
+| Prize contract | `0x2C898e8E0511792A530AB7CFE6C7FC3FAa9C99aF` on Portaldot V3 testnet, https://scanner-testnet-v3.portaldot.dev/#/accounts/5D56pvJwuWPKwmuVisyq9Up8U97azqwBHGBiSojgsrd6nFyf |
+| First draw | `0x242d97f42ed8fe65722c1811fc7ab2247c0490342bd94903da844839e0e3eba7`, https://scanner-testnet-v3.portaldot.dev/#/blocks/290955?tab=events |
 
 ## Description
 
@@ -71,15 +71,20 @@ is one prize.
 
 ## Proof
 
+- **Live on the V3 testnet.** `PrizeVault` is deployed at `0x2C898e8E0511792A530AB7CFE6C7FC3FAa9C99aF`, and pool 1 is
+  the first nomination pool on the testnet. It has 200 tPOT staked with both validators.
+- **A real draw has been paid.** Draw 1 moved a 5 tPOT sponsored prize from the pool to the contract, committed 3
+  members, took its ticket from block 290951, and paid 4.75 tPOT in block 290955. The website rebuilds that round from
+  public chain state and lands on the same winner.
+- **The renounce holds.** The pool's root and bouncer read null, and a dry run of the operator changing the commission
+  answers `DoesNotHavePermission`.
 - 21 contract tests, including fuzzing, and 11 tests of the shared draw maths and call encoding.
 - A full rehearsal on a fork of the live chain: deploy, renounce, stake, claim, commit, draw, pay, unbond.
 - The website bonding, finishing a draw, checking it and unbonding on that fork, which is what the demo video films.
 - A fresh clone reproduces every step from the README.
-- Read-only checks against the live chain: an Ethereum transaction reaches pallet 62, RPC block hashes match
-  Solidity's `blockhash`, and old state stays readable, so old draws stay checkable.
-- [Live deployment: vault address, pool ID, first draw, explorer links.]
 
-The README's "What has been proven" table says which claims passed on a fork and which passed live.
+The README's "What has been proven" table says which claims passed on a fork and which passed live, and lists every
+transaction.
 
 ## Business model
 

@@ -27,7 +27,8 @@ file. One key does everything: it deploys the contract, opens the pool and runs 
 |---|---|
 | Deploy `PrizeVault` | about 153 |
 | Founding bond and fees | about 21 |
-| Test members, if you seed them | 105 each at the default size |
+| Test members, if you seed them | 5 each, plus their bond |
+| Keeper fees | about 1 per draw |
 
 ## 3. Build and deploy
 
@@ -45,13 +46,24 @@ A nomination counts from the next era, so the first rewards arrive about two era
 ## 4. Add members
 
 ```bash
-npm run seed-members -- 3 100
+npm run seed-members -- 3 60
 ```
 
-This bonds 3 test members with 100 tPOT each, using the same call a MetaMask user signs. Their keys derive from the
+This bonds 3 test members with 60 tPOT each, using the same call a MetaMask user signs. Their keys derive from the
 operator's key, so no new secrets exist.
 
-## 5. Run the keeper
+## 5. Add to the prize
+
+Staking rewards take about 12 hours to start. To run a draw sooner, or to sponsor one, send tPOT to the pool's reward
+account:
+
+```bash
+npm run sponsor -- 5
+```
+
+It is a plain transfer, so any wallet can do the same.
+
+## 6. Run the keeper
 
 ```bash
 npm run crank
@@ -63,7 +75,7 @@ needs next and does only that, so it is safe to rerun.
 To run it every era, add `OPERATOR_PRIVATE_KEY` as a repository secret. The workflow in
 `.github/workflows/keeper.yml` then runs it on a schedule.
 
-## 6. Publish the website
+## 7. Publish the website
 
 ```bash
 npm run build --prefix web
